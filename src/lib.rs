@@ -5,10 +5,7 @@ use std::io::Cursor;
 use brotli::Decompressor;
 use std::raw::Slice;
 use std::mem;
-use std::error::Error;
-use std::fs::File;
 use std::io::prelude::*;
-use std::path::Path;
 /*
  * Function decompresses the input stream and stores it in the output buffer
  * Args:
@@ -27,26 +24,6 @@ pub extern fn brotli_compression_mock(input_buffer_ptr: *const libc::c_char, inp
     };
 
     let input_bytes: &mut [u8] = unsafe { mem::transmute(input_slice) };
-    //let input_brotli_stream = Cursor::new(input_bytes);
-
-    // Write input to a file
-    let path = Path::new("/tmp/rust_input");
-    let display = path.display();
-    let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't create {}: {}",
-                           display,
-                           Error::description(&why)),
-        Ok(file) => file,
-    };
-    match file.write_all((input_bytes)) {
-        Err(why) => {
-            panic!("couldn't write to {}: {}", display,
-                                               Error::description(&why))
-        },
-        Ok(_) => println!("successfully wrote to {}", display),
-    }
-    // END WRITE INPUT
-
     let input_brotli_stream = Cursor::new(input_bytes);
     let output_slice: Slice<u8> = Slice {
         data: output_buffer_ptr as *const u8,
@@ -56,22 +33,4 @@ pub extern fn brotli_compression_mock(input_buffer_ptr: *const libc::c_char, inp
     
     // Invoke the brotli decompressor on the input stream, write to the output byte array
     let _ = Decompressor::new(input_brotli_stream).read_exact(output_bytes);
-
-    // Write output to file
-    let path1 = Path::new("/tmp/rust_output");
-    let display1 = path1.display();
-    let mut file1 = match File::create(&path1) {
-        Err(why) => panic!("couldn't create {}: {}",
-                           display1,
-                           Error::description(&why)),
-        Ok(file) => file,
-    };
-    match file1.write_all((output_bytes)) {
-        Err(why) => {
-            panic!("couldn't write to {}: {}", display,
-                                               Error::description(&why))
-        },
-        Ok(_) => println!("successfully wrote to {}", display),
-    }
-    // END WRITE OUTPUT
 }
