@@ -16,7 +16,7 @@ use std::io::prelude::*;
  *    output_length: length of the output buffer
  */ 
 #[no_mangle]
-pub extern fn brotli_compression_mock(input_buffer_ptr: *const libc::c_char, input_length: libc::size_t, 
+pub extern fn brotli_decompress(input_buffer_ptr: *const libc::c_char, input_length: libc::size_t, 
                                       output_buffer_ptr: *const libc::c_char, output_length: libc::size_t) {
     let input_slice: Slice<u8> = Slice {
         data: input_buffer_ptr as *const u8,
