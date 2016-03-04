@@ -1,11 +1,11 @@
 [package]
 name = "embed"
 version = "0.1.0"
-authors = ["Mehant Baid <mehant@dropbox.com>"]
+authors = ["Mehant Baid <mehant@dropbox.com>", "Daniel Reiter Horn <danielrh@dropbox.com>"]
 
 [dependencies]
 libc = "0.2.5"
-brotli = {git = "https://github.com/ende76/brotli-rs.git"} 
+brotli = {git = "https://github.com/dropbox/brotli-rs.git"}
 [lib]
 name = "embed"
 crate-type = ["dylib"]
