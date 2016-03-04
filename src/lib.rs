@@ -46,3 +46,28 @@ pub extern "C" fn brotli_decompress(input_buffer_ptr: *const libc::c_char,
     }
     return bytes_read;
 }
+
+#[no_mangle]
+pub extern "C" fn brotli_is_zero_stream(input_buffer_ptr: *const libc::c_char,
+                                        input_length: libc::size_t)
+                                           -> u8 {
+    let input_slice = unsafe {
+        slice::from_raw_parts(input_buffer_ptr as *const u8, input_length as usize)
+    };
+
+    let input_brotli_stream = Cursor::new(input_slice);
+    let mut output_bytes = vec![0];
+
+    // Invoke the brotli decompressor on the input stream, write to the output byte array
+    let decompressed_stream = &mut Decompressor::new(input_brotli_stream);
+
+    match decompressed_stream.read(&mut output_bytes[0..1]) {
+        Err(_) => return 0,
+        Ok(num_read) => {
+            if num_read == 0 {
+                return 1
+            }
+        }
+    }
+    return 0;
+}
