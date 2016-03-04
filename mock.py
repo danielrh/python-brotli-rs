@@ -23,5 +23,5 @@ output_buffer = bytearray(output_length);
 output_array = (ctypes.c_char * output_length).from_buffer(output_buffer)
 output_char_ptr = ctypes.cast(output_array, ctypes.c_char_p)
 
-lib.brotli_decompress(input_char_ptr, input_length, output_char_ptr, output_length)
-print("Decompressed string: " + output_buffer)
+final_len = lib.brotli_decompress(input_char_ptr, input_length, output_char_ptr, output_length)
+print("Decompressed string(" + str(final_len + 0) + ") : " + output_buffer[0:final_len])
