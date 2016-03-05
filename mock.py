@@ -2,12 +2,12 @@ import ctypes
 from ctypes import cdll
 
 try:
-    lib = cdll.LoadLibrary("target/release/libembed.dylib")
+    lib = cdll.LoadLibrary("target/release/libpythonbrotli.dylib")
 except EnvironmentError:
     try:
-        lib = cdll.LoadLibrary("target/release/libembed.dll")
+        lib = cdll.LoadLibrary("target/release/libpythonbrotli.dll")
     except EnvironmentError:
-            lib = cdll.LoadLibrary("target/release/libembed.so")
+            lib = cdll.LoadLibrary("target/release/libpythonbrotli.so")
 
 # compressed input brotli stream
 input_compressed_stream = bytearray('\x1b\x13\x00\x00\xa4\xb0\xb2\xea\x81\x47\x02\x8a')
