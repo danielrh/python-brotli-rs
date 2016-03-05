@@ -44,8 +44,32 @@ pub extern "C" fn brotli_decompress(input_buffer_ptr: *const libc::c_char,
             }
         }
     }
+    if bytes_read == output_length {
+        let mut temp_byte = [0]; // read in just one byte
+        match decompressed_stream.read(&mut temp_byte) {
+            Err(_) => return 0,
+            Ok(num_read) => {
+                bytes_read += num_read;
+            }
+        }
+        if bytes_read > output_length {
+            // if there's more data, find out how much more there is
+            let mut temp_array = [0; 65536];
+            loop {
+                match decompressed_stream.read(&mut temp_array) {
+                    Err(_) => return 0,
+                    Ok(num_read) => {
+                        if num_read == 0 {
+                            break;
+                        }
+                        bytes_read += num_read;
+                    }
+                }
+            }
+        }
+    }
     if bytes_read == 0 && output_length != 0 {
-        // so the call site can distinguish a 0 lenght array from an error
+        // so the call site can distinguish a 0 length array from an error
         output_bytes[0] = 'z' as u8;
     }
     return bytes_read;
@@ -60,7 +84,7 @@ pub extern "C" fn brotli_is_zero_stream(input_buffer_ptr: *const libc::c_char,
     };
 
     let input_brotli_stream = Cursor::new(input_slice);
-    let mut output_bytes = vec![0];
+    let mut output_bytes = [0];
 
     // Invoke the brotli decompressor on the input stream, write to the output byte array
     let decompressed_stream = &mut Decompressor::new(input_brotli_stream);
