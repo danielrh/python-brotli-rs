@@ -44,6 +44,10 @@ pub extern "C" fn brotli_decompress(input_buffer_ptr: *const libc::c_char,
             }
         }
     }
+    if bytes_read == 0 && output_length != 0 {
+        // so the call site can distinguish a 0 lenght array from an error
+        output_bytes[0] = 'z' as u8;
+    }
     return bytes_read;
 }
 

@@ -42,6 +42,7 @@ output_char_ptr = ctypes.cast(output_array, ctypes.c_char_p)
 
 final_len = lib.brotli_decompress(input_char_ptr, input_length, output_char_ptr, output_length)
 assert final_len == 0
+assert output_array[0] == 'z'
 is_zero = lib.brotli_is_zero_stream(input_char_ptr, input_length)
 assert not not is_zero
 print("Decompressed string ; is zero for brotli:" + str(is_zero + 0) + "")
